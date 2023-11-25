@@ -1,7 +1,7 @@
 package com.drkcode.authapp.service;
 
 import com.drkcode.authapp.dto.SignInRequestDTO;
-import com.drkcode.authapp.dto.SignInTokens;
+import com.drkcode.authapp.dto.SignInTokensDTO;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,12 +23,12 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public SignInTokens signIn(SignInRequestDTO request) {
+    public SignInTokensDTO signIn(SignInRequestDTO request) {
         var user = userDetailsService.loadUserByUsername(request.email());
         var match = passwordEncoder.matches(request.password(), user.getPassword());
         if (!match) throw new BadCredentialsException(request.password());
         authenticateUser(user);
-        return new SignInTokens(tokenService.getAccessToken(user), tokenService.getRefreshToken(user));
+        return new SignInTokensDTO(tokenService.getAccessToken(user), tokenService.getRefreshToken(user));
     }
 
     public String refresh(String refreshToken) {

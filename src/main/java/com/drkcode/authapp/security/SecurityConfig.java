@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,8 +22,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, AuthorizationFilter authorizationFilter) throws Exception {
-        httpSecurity.cors(config -> config.disable());
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, BearerAuthorizationFilter bearerAuthorizationFilter) throws Exception {
+        httpSecurity.cors(Customizer.withDefaults());
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         httpSecurity.httpBasic(AbstractHttpConfigurer::disable);
@@ -33,7 +34,7 @@ public class SecurityConfig {
                     .anyRequest().authenticated();
         });
 
-        httpSecurity.addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(bearerAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 

@@ -1,4 +1,4 @@
-package com.drkcode.authapp.dto;
+package com.drkcode.authapp.security;
 
 import com.google.gson.Gson;
 import org.springframework.security.core.GrantedAuthority;

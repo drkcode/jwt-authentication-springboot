@@ -4,8 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.drkcode.authapp.dto.AccessTokenUserInfo;
-import com.drkcode.authapp.dto.RefreshTokenUserInfo;
+import com.drkcode.authapp.security.AccessTokenUserInfo;
+import com.drkcode.authapp.security.RefreshTokenUserInfo;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
