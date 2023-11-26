@@ -8,6 +8,7 @@ import java.util.List;
 
 public class AccessTokenUserInfo {
 
+    private static final Gson gson = new Gson();
     private final String username;
     private final List<String> roles;
 
@@ -17,13 +18,11 @@ public class AccessTokenUserInfo {
     }
 
     public static String toJson(UserDetails user) {
-        var gson = new Gson();
         var userInfo = new AccessTokenUserInfo(user.getUsername(), user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
         return gson.toJson(userInfo);
     }
 
     public static AccessTokenUserInfo fromJson(String tokenPayload) {
-        var gson = new Gson();
         return gson.fromJson(tokenPayload, AccessTokenUserInfo.class);
     }
 

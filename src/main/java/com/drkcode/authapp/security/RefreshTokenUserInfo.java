@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class RefreshTokenUserInfo {
 
+    private static final Gson gson = new Gson();
     private final String username;
 
     private RefreshTokenUserInfo(String username) {
@@ -12,13 +13,11 @@ public class RefreshTokenUserInfo {
     }
 
     public static String toJson(UserDetails user) {
-        var gson = new Gson();
         var userInfo = new RefreshTokenUserInfo(user.getUsername());
         return gson.toJson(userInfo);
     }
 
     public static RefreshTokenUserInfo fromJson(String tokenPayload) {
-        var gson = new Gson();
         return gson.fromJson(tokenPayload, RefreshTokenUserInfo.class);
     }
 

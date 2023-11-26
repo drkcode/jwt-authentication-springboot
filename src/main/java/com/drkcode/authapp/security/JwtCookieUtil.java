@@ -18,6 +18,8 @@ public class JwtCookieUtil {
         cookie.setMaxAge(JWT_COOKIE_MAX_AGE);
         cookie.setHttpOnly(true);
         cookie.setAttribute("SameSite", "None");
+        cookie.setPath("/");
+        cookie.setSecure(true);
         return cookie;
     }
 
