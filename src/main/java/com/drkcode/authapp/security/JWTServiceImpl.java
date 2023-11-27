@@ -23,9 +23,9 @@ public class JWTServiceImpl implements JWTService {
     private String SECRET;
 
     @PostConstruct
-    public void init() {
-        jwtBuilder = JWT.create();
+    private void init() {
         JWT_ALGORITM = Algorithm.HMAC512(SECRET.getBytes(StandardCharsets.UTF_8));
+        jwtBuilder = JWT.create();
         jwtVerifier = JWT.require(JWT_ALGORITM).build();
     }
 
