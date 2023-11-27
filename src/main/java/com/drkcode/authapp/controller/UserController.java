@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/default")
-public class DefaultProtectedController {
+@RequestMapping("/user")
+public class UserController {
 
     @GetMapping
-    public String basicUser() {
+    public String getInfo() {
         var currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         return String.format("Welcome, %s! Your are a STANDARD user.", currentUser);
     }

@@ -11,7 +11,7 @@ This project is just for **educational** porposes.
 - **GET** /admin
     - Requires authorization;
     - Only users with ADMIN role has access;
-- **GET** /default
+- **GET** /user
     - Requires authorization;
     - Any user has access;
 - **POST** /auth/sign-in

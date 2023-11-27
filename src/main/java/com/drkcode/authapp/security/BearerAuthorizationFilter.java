@@ -1,6 +1,5 @@
 package com.drkcode.authapp.security;
 
-import com.drkcode.authapp.service.JWTTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,17 +15,17 @@ import java.io.IOException;
 @Component
 public class BearerAuthorizationFilter extends OncePerRequestFilter {
 
-    private final JWTTokenService tokenService;
+    private final JWTService jwtService;
 
-    public BearerAuthorizationFilter(JWTTokenService tokenService) {
-        this.tokenService = tokenService;
+    public BearerAuthorizationFilter(JWTService jwtService) {
+        this.jwtService = jwtService;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = BearerTokenUtil.getToken(request);
         if (token.isPresent()) {
-            var userInfo = tokenService.verifyAccessToken(token.get());
+            var userInfo = jwtService.verifyAccessToken(token.get());
             var userRoles = userInfo.getRoles().stream().map(SimpleGrantedAuthority::new).toList();
             var userAuthentication = new UsernamePasswordAuthenticationToken(userInfo.getUsername(), null, userRoles);
             SecurityContextHolder.getContext().setAuthentication(userAuthentication);

@@ -1,24 +1,22 @@
-package com.drkcode.authapp.service;
+package com.drkcode.authapp.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.drkcode.authapp.security.AccessTokenUserInfo;
-import com.drkcode.authapp.security.RefreshTokenUserInfo;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-@Service
-public class JWTTokenService {
+@Component
+public class JWTServiceImpl implements JWTService {
 
     private static final Algorithm JWT_ALGORITM = Algorithm.HMAC512("secret-key".getBytes(StandardCharsets.UTF_8));
-    private JWTCreator.Builder jwtBuilder = JWT.create();
-    private JWTVerifier jwtVerifier = JWT.require(JWT_ALGORITM).build();
+    private final JWTCreator.Builder jwtBuilder = JWT.create();
+    private final JWTVerifier jwtVerifier = JWT.require(JWT_ALGORITM).build();
 
     public String getAccessToken(UserDetails user) {
         return jwtBuilder
@@ -43,5 +41,4 @@ public class JWTTokenService {
         var decodedJWT = jwtVerifier.verify(token);
         return RefreshTokenUserInfo.fromJson(decodedJWT.getSubject());
     }
-
 }

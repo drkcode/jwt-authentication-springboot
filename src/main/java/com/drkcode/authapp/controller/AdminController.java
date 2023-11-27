@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     @GetMapping
-    public String adminUser() {
+    public String getInfo() {
         var currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         return String.format("Welcome, %s! Your are an ADMIN user.", currentUser);
     }
