@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class JwtCookieUtil {
+public class JWTCookieUtil {
 
     private static final int JWT_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 

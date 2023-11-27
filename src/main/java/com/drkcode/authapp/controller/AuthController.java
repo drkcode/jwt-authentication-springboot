@@ -2,7 +2,7 @@ package com.drkcode.authapp.controller;
 
 import com.drkcode.authapp.dto.AccessTokenResponseDTO;
 import com.drkcode.authapp.dto.SignInRequestDTO;
-import com.drkcode.authapp.security.JwtCookieUtil;
+import com.drkcode.authapp.security.JWTCookieUtil;
 import com.drkcode.authapp.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,7 +22,7 @@ public class AuthController {
 
     @GetMapping("/refresh")
     public ResponseEntity<?> refresh(HttpServletRequest request) {
-        var jwtCookie = JwtCookieUtil.getCookie(request);
+        var jwtCookie = JWTCookieUtil.getCookie(request);
         if (jwtCookie.isEmpty()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         var refreshToken = jwtCookie.get().getValue();
         var accessToken = authService.refresh(refreshToken);
@@ -32,14 +32,14 @@ public class AuthController {
     @PostMapping("/sign-in")
     public ResponseEntity<AccessTokenResponseDTO> signIn(@RequestBody SignInRequestDTO request, HttpServletResponse response) {
         var authTokens = authService.signIn(request);
-        var jwtCookie = JwtCookieUtil.createCookie(authTokens.refreshToken());
+        var jwtCookie = JWTCookieUtil.createCookie(authTokens.refreshToken());
         response.addCookie(jwtCookie);
         return ResponseEntity.ok(new AccessTokenResponseDTO(authTokens.accessToken()));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        JwtCookieUtil.removeCookie(response);
+        JWTCookieUtil.removeCookie(response);
         return ResponseEntity.noContent().build();
     }
 }
