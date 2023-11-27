@@ -26,6 +26,7 @@ public class JwtCookieUtil {
     public static void removeCookie(HttpServletResponse response) {
         var cookie = new Cookie(JWT_COOKIE_NAME, "");
         cookie.setMaxAge(0);
+        cookie.setPath("/");
         response.addCookie(cookie);
     }
 
