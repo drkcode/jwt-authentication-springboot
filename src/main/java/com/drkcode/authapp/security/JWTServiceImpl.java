@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -14,9 +16,18 @@ import java.time.temporal.ChronoUnit;
 @Component
 public class JWTServiceImpl implements JWTService {
 
-    private static final Algorithm JWT_ALGORITM = Algorithm.HMAC512("secret-key".getBytes(StandardCharsets.UTF_8));
-    private final JWTCreator.Builder jwtBuilder = JWT.create();
-    private final JWTVerifier jwtVerifier = JWT.require(JWT_ALGORITM).build();
+    private JWTCreator.Builder jwtBuilder;
+    private Algorithm JWT_ALGORITM;
+    private JWTVerifier jwtVerifier;
+    @Value("${jwt.secret}")
+    private String SECRET;
+
+    @PostConstruct
+    public void init() {
+        jwtBuilder = JWT.create();
+        JWT_ALGORITM = Algorithm.HMAC512(SECRET.getBytes(StandardCharsets.UTF_8));
+        jwtVerifier = JWT.require(JWT_ALGORITM).build();
+    }
 
     public String getAccessToken(UserDetails user) {
         return jwtBuilder
