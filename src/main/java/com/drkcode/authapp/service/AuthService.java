@@ -2,45 +2,34 @@ package com.drkcode.authapp.service;
 
 import com.drkcode.authapp.dto.SignInRequestDTO;
 import com.drkcode.authapp.dto.SignInTokensDTO;
+import com.drkcode.authapp.security.JWTAuthenticationProvider;
 import com.drkcode.authapp.security.JWTService;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-    private final JWTService jwtService;
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
+    private final JWTAuthenticationProvider authenticationProvider;
 
-    public AuthService(JWTService jwtService, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    private final JWTService jwtService;
+
+    public AuthService(JWTAuthenticationProvider authenticationProvider, JWTService jwtService) {
+        this.authenticationProvider = authenticationProvider;
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public SignInTokensDTO signIn(SignInRequestDTO request) {
-        var user = userDetailsService.loadUserByUsername(request.email());
-        var match = passwordEncoder.matches(request.password(), user.getPassword());
-        if (!match) throw new BadCredentialsException(request.password());
-        authenticateUser(user);
-        return new SignInTokensDTO(jwtService.getAccessToken(user), jwtService.getRefreshToken(user));
+        authenticationProvider.authenticate(request.email(), request.password());
+        var authentication = authenticationProvider.getAuthentication();
+        var refreshToken = jwtService.getRefreshToken(authentication);
+        var accessToken = jwtService.getAccessToken(authentication);
+        return new SignInTokensDTO(accessToken, refreshToken);
     }
 
-    public String refresh(String refreshToken) {
-        var userInfo = jwtService.verifyRefreshToken(refreshToken);
-        var user = userDetailsService.loadUserByUsername(userInfo.getUsername());
-        authenticateUser(user);
-        return jwtService.getAccessToken(user);
+    public String refresh(String jwt) {
+        authenticationProvider.authenticate(jwt);
+        var auth = authenticationProvider.getAuthentication();
+        return jwtService.getAccessToken(auth);
     }
 
-    private void authenticateUser(UserDetails user) {
-        var authToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-    }
 }

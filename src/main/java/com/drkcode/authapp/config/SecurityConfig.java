@@ -1,5 +1,6 @@
-package com.drkcode.authapp.security;
+package com.drkcode.authapp.config;
 
+import com.drkcode.authapp.security.filters.BearerAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -42,6 +43,7 @@ public class SecurityConfig {
         httpSecurity.addFilterBefore(bearerAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
