@@ -19,7 +19,7 @@ public class AuthService {
     }
 
     public SignInTokensDTO signIn(SignInRequestDTO request) {
-        authenticationProvider.authenticate(request.email(), request.password());
+        authenticationProvider.authenticateWithUsernamePassword(request.email(), request.password());
         var authentication = authenticationProvider.getAuthentication();
         var refreshToken = jwtService.getRefreshToken(authentication);
         var accessToken = jwtService.getAccessToken(authentication);
@@ -27,7 +27,7 @@ public class AuthService {
     }
 
     public String refresh(String jwt) {
-        authenticationProvider.authenticate(jwt);
+        authenticationProvider.authenticateWithJWT(jwt);
         var auth = authenticationProvider.getAuthentication();
         return jwtService.getAccessToken(auth);
     }

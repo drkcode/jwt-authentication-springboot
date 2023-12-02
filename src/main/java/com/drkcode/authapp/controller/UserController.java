@@ -12,6 +12,6 @@ public class UserController {
     @GetMapping
     public String getInfo() {
         var currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        return String.format("Welcome, %s! Your are a STANDARD user.", currentUser);
+        return String.format("Welcome, %s! You can access STANDARD USER resources.", currentUser);
     }
 }

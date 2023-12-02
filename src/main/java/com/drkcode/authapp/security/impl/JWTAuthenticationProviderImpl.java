@@ -6,6 +6,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,24 +27,28 @@ public class JWTAuthenticationProviderImpl implements JWTAuthenticationProvider 
     }
 
     @Override
-    public void authenticate(String username, String password) {
+    public void authenticateWithUsernamePassword(String username, String password) {
         var user = userDetailsService.loadUserByUsername(username);
         var match = passwordEncoder.matches(password, user.getPassword());
         if (!match) throw new BadCredentialsException("Invalid credentials");
-        var authToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+        authenticateUser(user);
     }
 
     @Override
-    public void authenticate(String jwt) {
+    public void authenticateWithJWT(String jwt) {
         var username = jwtService.verifyToken(jwt);
         var user = userDetailsService.loadUserByUsername(username);
-        var authToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+        authenticateUser(user);
     }
 
     @Override
     public Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
+
+    private void authenticateUser(UserDetails user) {
+        var authToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+
 }

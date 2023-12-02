@@ -12,6 +12,6 @@ public class AdminController {
     @GetMapping
     public String getInfo() {
         var currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        return String.format("Welcome, %s! Your are an ADMIN user.", currentUser);
+        return String.format("Welcome, %s! You can access ADMIN resources.", currentUser);
     }
 }

@@ -11,10 +11,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -27,8 +23,14 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final BearerAuthorizationFilter bearerAuthorizationFilter;
+
+    public SecurityConfig(BearerAuthorizationFilter bearerAuthorizationFilter) {
+        this.bearerAuthorizationFilter = bearerAuthorizationFilter;
+    }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, BearerAuthorizationFilter bearerAuthorizationFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors(Customizer.withDefaults());
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -44,36 +46,13 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
     @Bean
-    public InMemoryUserDetailsManager userDetails() {
-        var user1 = User.withUsername("darlisson@email.com")
-                .password(passwordEncoder().encode("1234"))
-                .roles("ADMIN").build();
-
-        var user2 = User
-                .withUsername("johndoe@email.com")
-                .password(passwordEncoder().encode("1234"))
-                .build();
-
-        var userDetailsManager = new InMemoryUserDetailsManager();
-        userDetailsManager.createUser(user1);
-        userDetailsManager.createUser(user2);
-        return userDetailsManager;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("*"));
