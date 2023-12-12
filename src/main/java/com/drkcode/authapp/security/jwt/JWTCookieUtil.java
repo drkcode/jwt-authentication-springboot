@@ -1,17 +1,20 @@
-package com.drkcode.authapp.security;
+package com.drkcode.authapp.security.jwt;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.BadCredentialsException;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
-public class JWTCookieUtil {
+public abstract class JWTCookieUtil {
 
     private static final int JWT_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
     private static final String JWT_COOKIE_NAME = "jwt";
+
+    private JWTCookieUtil() {
+    }
 
     public static Cookie createCookie(String tokenValue) {
         var cookie = new Cookie(JWT_COOKIE_NAME, tokenValue);
@@ -30,11 +33,14 @@ public class JWTCookieUtil {
         response.addCookie(cookie);
     }
 
-    public static Optional<Cookie> getCookie(HttpServletRequest request) {
-        if (request.getCookies() == null) {
-            return Optional.empty();
+    public static Cookie getCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            var jwtCookie = Stream.of(request.getCookies()).filter(cookie -> cookie.getName().equals(JWT_COOKIE_NAME)).findFirst();
+            if (jwtCookie.isPresent()) {
+                return jwtCookie.get();
+            }
         }
-        return Stream.of(request.getCookies()).filter(cookie -> cookie.getName().equals(JWT_COOKIE_NAME)).findFirst();
+        throw new BadCredentialsException("Invalid jwt cookie.");
     }
 
 }

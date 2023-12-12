@@ -1,13 +1,16 @@
-package com.drkcode.authapp.security;
+package com.drkcode.authapp.security.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 
 import java.util.Optional;
 
-public class BearerTokenUtil {
+public abstract class BearerTokenResolver {
 
-    public static final String TOKEN_PREFIX = "Bearer ";
+    private static final String TOKEN_PREFIX = "Bearer ";
+
+    private BearerTokenResolver() {
+    }
 
     public static Optional<String> getToken(HttpServletRequest request) {
         var bearertoken = request.getHeader(HttpHeaders.AUTHORIZATION);

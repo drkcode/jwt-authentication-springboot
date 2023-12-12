@@ -1,13 +1,11 @@
 package com.drkcode.authapp.security;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 
 public interface JWTService {
-    String getAccessToken(UserDetails user);
+    String getAccessToken(Authentication authentication);
 
-    String getRefreshToken(UserDetails user);
+    String getRefreshToken(Authentication authentication);
 
-    AccessTokenUserInfo verifyAccessToken(String token);
-
-    RefreshTokenUserInfo verifyRefreshToken(String token);
+    String verifyToken(String token);
 }
